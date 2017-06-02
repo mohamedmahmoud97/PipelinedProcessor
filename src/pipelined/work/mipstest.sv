@@ -18,7 +18,7 @@ module testbench();
   // generate clock to sequence tests
   always
     begin
-      clk <= 1; # 20; clk <= 0; # 5;
+      clk <= 1; # 10; clk <= 0; # 10;
     end
 
   // check that 7 gets written to address 84
