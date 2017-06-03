@@ -1,8 +1,8 @@
 //setting the module for the ALU
 module alu (input  logic [31:0] a,b,
 	    input  logic [4:0] shamt,
-	    input  logic [3:0]    f,
-            output logic [31:0]   y);
+	    input  logic [3:0]    f,//will be 4 bits to support more operations
+            output logic [31:0]   y,high,low);
 
 	logic[31:0] s;
 //block of statements 
@@ -17,11 +17,14 @@ module alu (input  logic [31:0] a,b,
 			        4'b0110  : y = a + (~b+1);                  // a SUB b
 				4'b0111  : begin s = a+~b+1;
                     				 if(s[31]) y=32'h0000_0001; else y=32'h0000_0000; 
-                  			  end                              //STL 
-				4'b1000  : y = b << shamt;                 //SLL///////////////////
-				4'b1001  : y = b >> shamt;                 //SRL///////////////////
-				4'b1010  : y = a;			   //MFHI OR MFLO
-       				default  : y=0;
+                  			  end                               //STL 
+				4'b1000  : y = b << shamt;                  //SLL
+				4'b1001  : y = b >> shamt;                  //SRL
+				4'b1010  : {high,low} = a * b;              //mult
+				4'b1011  : begin low  = a / b;
+						 high = a % b; 
+					   end                              //div
+       				default : y=0;
        			endcase	
 		end
 endmodule 

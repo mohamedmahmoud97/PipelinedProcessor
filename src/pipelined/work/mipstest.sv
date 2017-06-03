@@ -1,8 +1,6 @@
 module testbench();
-
   logic        clk;
   logic        reset;
-
   logic [31:0] writedata, dataadr;
   logic        memwrite;
 

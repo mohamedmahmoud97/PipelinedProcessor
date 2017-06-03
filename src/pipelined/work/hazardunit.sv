@@ -1,12 +1,12 @@
 module hazard(input logic [4:0] rsD, rtD, rsE, rtE,
 	      input logic [4:0] writeregE,writeregM, writeregW,
-              input logic regwriteE, regwriteM,regwriteW,		
-	      input logic memtoregE, memtoregM,branchD,branchneD,
+              input logic regwriteE, regwriteM,regwriteW,
+	      input logic memtoregE, memtoregM,branchD, branchneD,
 	      output logic forwardaD,forwardbD,
 	      output logic [1:0] forwardaE, forwardbE,
 	      output logic stallF, stallD,flushE);
 
-	logic loadstallD, branchstallD;
+	logic lwstallD, branchstallD;
 // forwarding sources to D stage (branch equality)
 	assign forwardaD = (rsD !=0 & rsD == writeregM &regwriteM);
 	assign forwardbD = (rtD !=0 & rtD == writeregM &regwriteM);
@@ -26,12 +26,11 @@ module hazard(input logic [4:0] rsD, rtD, rsE, rtE,
 						forwardbE = 2'b01;
 		end
 // stalls
-	assign #1 loadstallD     = memtoregE &(rtE == rsD | rtE == rtD);
-	///////// add LWStall logic hereeeeeeeee
-	assign #1 branchstallD = (branchD | branchneD) &(regwriteE &(writeregE == rsD | writeregE == rtD)
-				 |
-				 memtoregM &(writeregM == rsD | writeregM == rtD));
-	assign #1 stallD = loadstallD | branchstallD;
+	assign #1 lwstallD     = memtoregE &(rtE == rsD | rtE == rtD);
+	assign #1 branchstallD = ( (branchD | branchneD) &(regwriteE &(writeregE == rsD | writeregE == rtD)) )
+					|
+				 ( (branchD | branchneD) &(memtoregM &(writeregM == rsD | writeregM == rtD)) );//beq and bne 
+	assign #1 stallD = lwstallD | branchstallD;
 	assign #1 stallF = stallD;
 // stalling D stalls all previous stages
 	assign #1 flushE = stallD;
@@ -41,4 +40,3 @@ module hazard(input logic [4:0] rsD, rtD, rsE, rtE,
 // instead, another bypass network could
 // be added from W to M
 endmodule
-
