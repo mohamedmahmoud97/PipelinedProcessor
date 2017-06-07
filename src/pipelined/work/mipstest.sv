@@ -26,19 +26,22 @@
     begin
       if(memwrite) begin
 	if(count === 0) begin
-        if(dataadr === 60 & writedata === 230) begin
+        if(dataadr === 84 & writedata === 7654) begin
           $display("Simulation succeeded");
           //$stop;
         end end else if(count === 1) begin
-			if(dataadr === 61 & writedata === 29) begin
+			if(dataadr === 40 & writedata === 36) begin
 				$display("Simulation succeeded");
-	end end 
+	end end else if(count === 2) begin
+			if(dataadr === 60 & writedata === 36) begin
+				$display("Simulation succeeded");
+	end end
 	else if (dataadr !== 80) begin
           $display("Simulation failed");
           //$stop;
         end
 	count++;
-	if(count === 2)
+	if(count === 3)
 		$stop;
       end
     end
