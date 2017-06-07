@@ -27,9 +27,11 @@ module hazard(input logic [4:0] rsD, rtD, rsE, rtE,
 		end
 // stalls
 	assign #1 lwstallD     = memtoregE &(rtE == rsD | rtE == rtD);
-	assign #1 branchstallD = ( (branchD | branchneD) &(regwriteE &(writeregE == rsD | writeregE == rtD)) )
-					|
-				 ( (branchD | branchneD) &(memtoregM &(writeregM == rsD | writeregM == rtD)) );//beq and bne 
+	assign #1 branchstallD = (branchD | branchneD) &(
+							  regwriteE &(writeregE == rsD | writeregE == rtD)
+							 |
+							  memtoregM &(writeregM == rsD | writeregM == rtD)
+							);//beq and bne 
 	assign #1 stallD = lwstallD | branchstallD;
 	assign #1 stallF = stallD;
 // stalling D stalls all previous stages
